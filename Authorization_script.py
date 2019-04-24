@@ -2,6 +2,7 @@ import requests
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from requests.auth import HTTPBasicAuth
+import requests.utils, pickle
 
 import requests.utils, pickle
 def Uca_authorize(Session,Uca_login,Uca_password):
