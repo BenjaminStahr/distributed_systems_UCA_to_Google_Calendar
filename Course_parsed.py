@@ -31,13 +31,17 @@ def Courses_links(Session):
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
     return links
+
+
 def prepare(link):
     link=[i for i in link.split('?')]
     for i in link[1].split('='):
         link.append(i)
     #print(link)
     return link
-def Course_page(Session,link):
+
+
+def Get_camp_page(Session,link):
 
     link=prepare(link)
 
@@ -60,6 +64,8 @@ def Course_page(Session,link):
 
 def Event_links(Session,page):
     entregas_links={}
+
+    entregas_links['Name']=str(page.title.string)
     url = "https://av03-18-19.uca.es/moodle/theme/image.php/boostuca/assign/1553847905/icon"
     for i in page.find_all('img'):
         if url == str(i.get('src')):
@@ -71,6 +77,7 @@ def Event_links(Session,page):
 
     return entregas_links
 
+def Event_parse(page):
 
 
 
@@ -82,14 +89,18 @@ with open('Session.txt', 'rb') as f:
 
 f=open('courses_links.txt','r')
 links = [line.strip() for line in f]
-print(links)
-print(links[0])
+#print(links)
+#print(links[0])
 f.close()
 with open('Session.txt', 'rb') as f:
     s = pickle.load(f)
 
-#page=Course_page(s,str(links[0]))
-
-for i in links:
-    page=Course_page(s,str(i))
-    print(Event_links(s,page))
+page=Get_camp_page(s,str('https://av03-18-19.uca.es/moodle/mod/assign/view.php?id=84345'))
+#for i in links:
+#    page=Course_page(s,str(i))
+#    print(Event_links(s,page))
+table=page.find('table',attrs={'class':'generaltable'})
+table_body = table.find('tbody')
+j=table_body.find_all('td')
+m=[a.text.strip() for a in j ]
+print(m)
