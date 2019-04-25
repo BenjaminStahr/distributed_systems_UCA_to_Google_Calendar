@@ -10,5 +10,5 @@ def processForm():
     passWordCampus = request.forms.get('pwdCampus')
     return '<p>'+ userNameCampus+ ' ' + passWordCampus+'</p>'
 
-if __name__ == '__main__':
-    run()
+#if __name__ == '__main__':
+#    run()

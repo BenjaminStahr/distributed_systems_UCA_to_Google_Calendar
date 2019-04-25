@@ -47,11 +47,11 @@ def Events_parse(Session,link):
 
 
 
-#s = requests.Session()
-#Uca_authorize(s,'u713474834','c240441')
+s = requests.Session()
+Uca_authorize(s,'u713474834','c240441')
 with open('Session.txt', 'rb') as f:
     s = pickle.load(f)
-#Courses_parse(s)
+Courses_parse(s)
 
 f=open('courses_links.txt','r')
 links = [line.strip() for line in f]
