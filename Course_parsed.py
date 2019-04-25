@@ -30,28 +30,23 @@ def Events_parse(Session,link):
     browser = mechanicalsoup.StatefulBrowser(Session)
     #browser.open_relative('https://campusvirtual.uca.es/intranet/es/cursos/actuales/estudiante/')
     browser.open_relative(link)
-    print(browser.get_url())
-    browser.open_relative(link)
+
+    #browser.open_relative(link)
     page = browser.get_current_page()
     #print(page.find_all('a'))
     #browser.find_link('/')
     page=browser.get_current_page()
-    browser.select_form('input[name="AuthState"]')
-    browser.submit_selected()
+
+
 
     page = browser.get_current_page()
     print((page))
-    print(page.find_all('input'))
-    for lin in page.find_all('input'):
-        a=[i for i in (str(lin.get('value'))).split(":")]
-        print(a)
-        #print((str(a[0])+":"+str(a[1])))
-        print(a[0])
 
 
 
 
-'''
+
+
 #s = requests.Session()
 #Uca_authorize(s,'u713474834','c240441')
 with open('Session.txt', 'rb') as f:
@@ -60,8 +55,7 @@ with open('Session.txt', 'rb') as f:
 
 f=open('courses_links.txt','r')
 links = [line.strip() for line in f]
-
+print(links[0])
 f.close()
 
-#Events_parse(s,str(links[1]))
-'''
+Events_parse(s,str(links[1]))
