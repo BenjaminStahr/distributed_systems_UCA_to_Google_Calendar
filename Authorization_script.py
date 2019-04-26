@@ -25,7 +25,6 @@ def Uca_authorize(Session,Uca_login,Uca_password):
     browser.submit_selected()
 
 
-
 def Courses_list(Session):
     browser = mechanicalsoup.StatefulBrowser(Session)
     browser.open_relative('https://campusvirtual.uca.es/intranet/es/cursos/actuales/estudiante/')
@@ -34,7 +33,6 @@ def Courses_list(Session):
     #print(page_to_parse)  # It's a webpage with our courses. To parse this web page will be the second step
     url1 = browser.get_url()
     return page_to_parse
-
 
 
 s = requests.Session()
