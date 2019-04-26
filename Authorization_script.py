@@ -39,7 +39,7 @@ def Courses_list(Session):
 
 
 
-#s = requests.Session()
+#ss = requests.Session()
 
 #Uca_authorize(s,'u713474834','c240441')
 #with open('Session.txt', 'rb') as f:
