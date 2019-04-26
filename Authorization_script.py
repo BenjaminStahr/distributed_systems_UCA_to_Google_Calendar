@@ -23,6 +23,8 @@ def Uca_authorize(Session,Uca_login,Uca_password):
     # after some attempts the solution was found:
     browser.select_form()
     browser.submit_selected()
+    with open('Session.txt', 'wb') as f:
+        pickle.dump(Session,f)
 
 
 def Courses_list(Session):
@@ -31,7 +33,7 @@ def Courses_list(Session):
 
     page_to_parse = browser.get_current_page()  #
     #print(page_to_parse)  # It's a webpage with our courses. To parse this web page will be the second step
-    url1 = browser.get_url()
+
     return page_to_parse
 
 
