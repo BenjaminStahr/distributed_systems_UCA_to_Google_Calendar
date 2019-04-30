@@ -1,4 +1,3 @@
-import requests
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from requests.auth import HTTPBasicAuth
@@ -13,8 +12,6 @@ def Courses_links(Session):
     page = browser.get_current_page()
 
 
-    #print(soup.find_all('a'))
-    #print(page.find_all('href'))
     links=[]
     for link in page.find_all('a'):
         pat='https://av'
@@ -23,26 +20,27 @@ def Courses_links(Session):
             links.append(l)
         links=list(dict.fromkeys(links)) #remove the same links
     f=open('courses_links.txt','w')
-    print(links)
+    #print(links)
     for link in links:
         f.write(link+'\n')
     f.close
 
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
-    return links
+    return [links,Session]
 
 
 def prepare(link):
     link=[i for i in link.split('?')]
+    print(link)
     for i in link[1].split('='):
         link.append(i)
-    #print(link)
+
     return link
 
 
 def Get_camp_page(Session,link):
-
+    print(link)
     link=prepare(link)
 
     id = {}
@@ -56,7 +54,7 @@ def Get_camp_page(Session,link):
     page= browser.get_current_page()
     #browser.launch_browser()
 
-    print(browser.get_url())
+    #print(browser.get_url())
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
     return page
@@ -73,35 +71,57 @@ def Event_links(Session,page):
             if a.get('href') != None and a.span != None:
                 entregas_links[str(a.get('href'))]=str(a.span.contents[0])
 
-
-
     return entregas_links
 
+def Event_parse(s,link):
+    page = Get_camp_page(s,link)
+
+    table = page.find('table', attrs={'class': 'generaltable'})
+    table_body = table.find('tbody')
+    j = table_body.find_all('td')
+    m = [a.text.strip() for a in j]
+    return m
 
 
 
 
-s = requests.Session()
-Uca_authorize(s,'u713474834','c240441')
-with open('Session.txt', 'rb') as f:
-    s = pickle.load(f)
+def get_campus(Uca_login, Uca_password):
+    s=requests.Session()
+    events=list()
+    s =Uca_authorize(s,Uca_login,Uca_password)
+    lists=Courses_links(s)
+    Courses=lists[0]
+    s =lists[1]
+    print(Courses)
+    for link in Courses:
+        print(link)
+        Course_page=Get_camp_page(s,link)
+        for j in Event_links(s,Course_page):
+
+            events.append(Event_parse(s,j))
+
+
+
+
+    return events
+
+
+
+#s = requests.Session()
+#Uca_authorize(s,'u713474834','c240441')
+#with open('Session.txt', 'rb') as f:
+#    s = pickle.load(f)
 #Courses_links(s)
 
-f=open('courses_links.txt','r')
-links = [line.strip() for line in f]
+#f=open('courses_links.txt','r')
+#links = [line.strip() for line in f]
 #print(links)
 #print(links[0])
-f.close()
-with open('Session.txt', 'rb') as f:
-    s = pickle.load(f)
+#f.close()
+#with open('Session.txt', 'rb') as f:
+#    s = pickle.load(f)
 
-page=Get_camp_page(s,str('https://av03-18-19.uca.es/moodle/mod/assign/view.php?id=84345'))
-#for i in links:
-#    page=Course_page(s,str(i))
-#    print(Event_links(s,page))
-table=page.find('table',attrs={'class':'generaltable'})
-table_body = table.find('tbody')
-j=table_body.find_all('td')
-m=[a.text.strip() for a in j]
-print(m)
+
+#rint(m)
+print(get_campus('u713474834','c240441'))
 

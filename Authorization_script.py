@@ -25,6 +25,7 @@ def Uca_authorize(Session,Uca_login,Uca_password):
     browser.submit_selected()
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
+    return Session
 
 
 def Courses_list(Session):
@@ -37,9 +38,10 @@ def Courses_list(Session):
     return page_to_parse
 
 
-s = requests.Session()
 
-Uca_authorize(s,'u713474834','c240441')
-with open('Session.txt', 'rb') as f:
-    s = pickle.load(f)
-print(Courses_list(s))
+#ss = requests.Session()
+
+#Uca_authorize(s,'u713474834','c240441')
+#with open('Session.txt', 'rb') as f:
+#    s = pickle.load(f)
+#print(Courses_list(s))
