@@ -1,5 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+import json
 
 
 '''def authorize_drive():
@@ -27,6 +28,21 @@ google_authorization.SaveCredentialsFile("mycreds.txt")
 
 drive = GoogleDrive(google_authorization)
 
-file1 = drive.CreateFile({'title': 'Hello.txt'})
-file1.SetContentString('Hello World!') # Set content of the file from given string.
+file1 = drive.CreateFile({'title': 'test.json'})
+
+file1.SetContentString(json.dumps({
+        'summary': 'tarea para SD',
+        'description': 'A chance to hear more about Google\'s developer products.',
+        'start': {
+            'dateTime': '2019-04-28T12:00:00+02:00',
+            'timeZone': 'Europe/Madrid',
+        },
+        'end': {
+            'dateTime': '2019-04-28T12:00:00+02:00',
+            'timeZone': 'Europe/Madrid',
+        },
+        'attendees': [
+            {'email': 'johntitorium@gmail.com'}
+        ]
+    }))
 file1.Upload()

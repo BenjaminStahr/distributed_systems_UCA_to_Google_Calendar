@@ -6,10 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-
+SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/drive']
 
 # TODO make this aviable for more countrys than just Spain
 def get_event(summary, description, start_date, end_date, user):
@@ -31,60 +28,75 @@ def get_event(summary, description, start_date, end_date, user):
     return event
 
 
-def main():
+def get_google_calender_service():
+    # If modifying these scopes, delete the file token.pickle.
 
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
-
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
+        # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                'client_secrets.json', SCOPES)
             creds = flow.run_local_server()
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
-    service = build('calendar', 'v3', credentials=creds)
+    service_calender = build('calendar', 'v3', credentials=creds)
+    return service_calender
 
-    # Call the Calendar API
-    '''now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
-    events_result = service.events().list(calendarId='primary', timeMin=now,
-                                        maxResults=10, singleEvents=True,
-                                        orderBy='startTime').execute()
-    events = events_result.get('items', [])
+def get_google_drive_service():
+    creds = None
+    #SCOPES = ['https://www.googleapis.com/auth/drive']
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'client_secrets.json', SCOPES)
+            creds = flow.run_local_server()
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    drive_service = build('drive', 'v3', credentials=creds)
+    return drive_service
 
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
-    
-    event = {
-        'summary': 'tarea para SD',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-            'dateTime': '2019-04-28T12:00:00+02:00',
-            'timeZone': 'Europe/Madrid',
-        },
-        'end': {
-            'dateTime': '2019-04-28T12:00:00+02:00',
-            'timeZone': 'Europe/Madrid',
-        },
-        'attendees': [
-            {'email': 'johntitorium@gmail.com'}
-        ]
-    }'''
+
+def get_json_file(service_drive):
+    # Call the Drive v3 API
+    results = service_drive.files().list(
+        fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+
+    if not items:
+        print('No files found.')
+    else:
+        print('Files:')
+        for item in items:
+            print(u'{0} ({1})'.format(item['name'], item['id']))
+
+
+def main():
+
+    service_calender = get_google_calender_service()
+
+    service_drive = get_google_drive_service()
+
 
     # to write an event into the calender you need to specify summary, description, start_date, end_date, user
     # this is just for testing usages
@@ -96,7 +108,7 @@ def main():
     user = 'johntitorium@gmail.com'
 
     event = get_event(summary, description, start_date, end_date, user)
-    service.events().insert(calendarId='primary', body=event).execute()
+    service_calender.events().insert(calendarId='primary', body=event).execute()
 
 
 if __name__ == '__main__':
