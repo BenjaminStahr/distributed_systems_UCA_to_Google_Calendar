@@ -4,6 +4,7 @@ from requests.auth import HTTPBasicAuth
 from Authorization_script import Uca_authorize, Courses_list
 import requests.utils, pickle
 import requests
+import datetime
 import logging
 def Courses_links(Session):
     browser = mechanicalsoup.StatefulBrowser(Session)
@@ -32,7 +33,7 @@ def Courses_links(Session):
 
 def prepare(link):
     link=[i for i in link.split('?')]
-    print(link)
+    #print(link)
     for i in link[1].split('='):
         link.append(i)
 
@@ -40,7 +41,7 @@ def prepare(link):
 
 
 def Get_camp_page(Session,link):
-    print(link)
+    #print(link)
     link=prepare(link)
 
     id = {}
@@ -108,7 +109,24 @@ def to_json(summary, description, start_date, end_date, user):
     }
     return event
 
+def date_transform(a):
+    a = 'viernes, 8 de marzo de 2019, 20:40'
+    b = a.split()
+    # start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
+    year=int(b[5].split(',')[0])
+    hours=int(b[6].split(":")[0])
+    mins=int(b[6].split(":")[1])
 
+    s = {'enero': 1, 'febrero': 2, 'marzo': 3, 'abríl': 4, 'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
+         'septiembre': 9, 'octubre': 10,
+         'noviembre': 11, 'diciembre': 12}
+    month=int(s[b[3]])
+    day=int(b[1])
+    date=datetime.datetime(year,month,day,hours,mins,0,0, tzinfo=None, fold=0).isoformat()
+    return date
+
+def sendmessage(message):
+    pass
 
 def get_campus(Uca_login, Uca_password,email):
     s=requests.Session()
@@ -117,10 +135,10 @@ def get_campus(Uca_login, Uca_password,email):
     lists=Courses_links(s)
     Courses=lists[0]
     s =lists[1]
-    print(Courses)
+    #print(Courses)
     for link in Courses:
         events=list()
-        print(link)
+        #print(link)
         Course_page=Get_camp_page(s,link)
         evl=Event_links(s,Course_page)
         ev=evl[0]
@@ -128,12 +146,17 @@ def get_campus(Uca_login, Uca_password,email):
 
         for j in ev.keys():
             if j!='Name':
-                print(j)
+                #print(j,ev[j])
 
-                event=Event_parse(s,j))
-                start_date=event[5]
-                description=event[1]+' '+ event[3]
-
+                event=Event_parse(s,j)
+                summary=evnm+' '+ev[j]
+                start_date=date_transform(event[5])
+                description=str(event[1]+' '+ event[3])
+                end_date=start_date
+                user=email
+                message=to_json(summary, description, start_date, end_date, user)
+                print(message)
+                sendmessage(message)
 
         events_list.append(events)
 
