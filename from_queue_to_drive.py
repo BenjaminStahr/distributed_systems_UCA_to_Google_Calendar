@@ -1,6 +1,5 @@
 import pika
 import Drive_Authorization
-import ast
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -12,11 +11,10 @@ channel.queue_declare(queue='MessageQueue')
 
 
 def callback(ch, method, properties, body):
-    print(body.decode("utf-8"))
     Drive_Authorization.upload_file_to_drive(body.decode("utf-8"))
 
 
-channel.basic_consume(queue='hello',
+channel.basic_consume(queue='MessageQueue',
                       auto_ack=True,
                       on_message_callback=callback)
 

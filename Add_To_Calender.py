@@ -115,7 +115,7 @@ def main():
 
     event = get_event(summary, description, start_date, end_date, user)
     service_calender.events().insert(calendarId='primary', body=event).execute()
-    #service_calender.events().insert(calendarId='primary', body=text).execute()
+    service_calender.events().insert(calendarId='primary', body=text).execute()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-import json
 
 
 def upload_file_to_drive(file_content):
