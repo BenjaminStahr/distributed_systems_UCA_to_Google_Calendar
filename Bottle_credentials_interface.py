@@ -10,7 +10,9 @@ def form():
 def processForm():
     userNameCampus = request.forms.get('userNameCampus')
     passWordCampus = request.forms.get('pwdCampus')
-    return '<p>'+ userNameCampus+ ' ' + passWordCampus+'</p>'
+    userNameGoogle = request.forms.get('userNameGoogle')
+    print('<p>'+ userNameCampus+ ' ' + passWordCampus+ userNameGoogle +'</p>')
+    return '<p>'+ userNameCampus+ ' ' + passWordCampus+ userNameGoogle +'</p>'
 
 
 if __name__ == '__main__':
