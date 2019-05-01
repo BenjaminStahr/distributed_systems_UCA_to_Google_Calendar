@@ -71,15 +71,22 @@ def Event_links(Session,page):
             if a.get('href') != None and a.span != None:
                 entregas_links[str(a.get('href'))]=str(a.span.contents[0])
 
-    return entregas_links
+    return entregas_links, entregas_links['Name']
 
 def Event_parse(s,link):
     page = Get_camp_page(s,link)
 
+
     table = page.find('table', attrs={'class': 'generaltable'})
     table_body = table.find('tbody')
     j = table_body.find_all('td')
-    m = [a.text.strip() for a in j]
+    text='Tiempo restante'
+    m=[]
+    for a in j:
+        if a.text.strip()==text:
+            break
+        else:
+            m.append(a.text.strip())
     return m
 
 
@@ -87,23 +94,30 @@ def Event_parse(s,link):
 
 def get_campus(Uca_login, Uca_password):
     s=requests.Session()
-    events=list()
+    events_list=list()
     s =Uca_authorize(s,Uca_login,Uca_password)
     lists=Courses_links(s)
     Courses=lists[0]
     s =lists[1]
     print(Courses)
     for link in Courses:
+        events=list()
         print(link)
         Course_page=Get_camp_page(s,link)
-        for j in Event_links(s,Course_page):
+        evl=Event_links(s,Course_page)
+        ev=evl[0]
+        evnm=evl[1]
 
-            events.append(Event_parse(s,j))
+        for j in ev.keys():
+            if j!='Name':
+                print(j)
+                events.append(Event_parse(s,j))
+        events_list.append(events)
 
 
 
 
-    return events
+    return events_list
 
 
 
