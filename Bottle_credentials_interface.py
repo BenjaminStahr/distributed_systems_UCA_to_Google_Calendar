@@ -1,4 +1,4 @@
-from bottle import run, get, template, post, request
+'''from bottle import run, get, template, post, request
 
 @get('/')
 def form():
@@ -12,3 +12,4 @@ def processForm():
 
 #if __name__ == '__main__':
 #    run()
+'''
