@@ -5,10 +5,15 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import ast
 
+
+# our scopes for authentification at google services
 SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/drive']
 
+
 # TODO make this aviable for more countrys than just Spain
+# a function for sending events to the calender, where you only have the data
 def get_event(summary, description, start_date, end_date, user):
     event = {
         'summary': summary,
@@ -28,9 +33,8 @@ def get_event(summary, description, start_date, end_date, user):
     return event
 
 
+# function for getting the calender service and login
 def get_google_calender_service():
-    # If modifying these scopes, delete the file token.pickle.
-
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -53,12 +57,10 @@ def get_google_calender_service():
     service_calender = build('calendar', 'v3', credentials=creds)
     return service_calender
 
+
+# a function for logging in to google drive and getting the remote drive service
 def get_google_drive_service():
     creds = None
-    #SCOPES = ['https://www.googleapis.com/auth/drive']
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -77,7 +79,9 @@ def get_google_drive_service():
     return drive_service
 
 
-def get_json_file(service_drive):
+# a function, which searches for a file named test.json in the google drive and returns a dict representation of this
+# json, the name of the json we can change in the future
+def get_string_from_file(service_drive):
     # Call the Drive v3 API
     results = service_drive.files().list(
         fields="nextPageToken, files(id, name)").execute()
@@ -86,17 +90,20 @@ def get_json_file(service_drive):
     if not items:
         print('No files found.')
     else:
-        print('Files:')
         for item in items:
-            print(u'{0} ({1})'.format(item['name'], item['id']))
+            if item['name'] == 'test.json':
+                body = service_drive.files().get_media(fileId=item['id']).execute()
+                return ast.literal_eval(body.decode("utf-8").replace('"', "'"))
 
 
+# setting up calender service and drive service and inserting two events into the calender
 def main():
 
     service_calender = get_google_calender_service()
-
     service_drive = get_google_drive_service()
+    text = get_string_from_file(service_drive)
 
+    print(text)
 
     # to write an event into the calender you need to specify summary, description, start_date, end_date, user
     # this is just for testing usages
@@ -109,6 +116,7 @@ def main():
 
     event = get_event(summary, description, start_date, end_date, user)
     service_calender.events().insert(calendarId='primary', body=event).execute()
+    service_calender.events().insert(calendarId='primary', body=text).execute()
 
 
 if __name__ == '__main__':

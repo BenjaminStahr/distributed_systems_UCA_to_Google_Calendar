@@ -3,13 +3,6 @@ from pydrive.drive import GoogleDrive
 import json
 
 
-'''def authorize_drive():
-    google_authorization = GoogleAuth()
-    google_authorization.DEFAULT_SETTINGS['client_config_file'] = "client_secret.json"
-    google_authorization.LoadCredentialsFile("mycreds.txt")
-    return GoogleDrive(google_authorization)'''
-
-
 google_authorization = GoogleAuth()
 google_authorization.LoadCredentialsFile("mycreds.txt")
 
@@ -30,19 +23,20 @@ drive = GoogleDrive(google_authorization)
 
 file1 = drive.CreateFile({'title': 'test.json'})
 
-file1.SetContentString(json.dumps({
-        'summary': 'tarea para SD',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-            'dateTime': '2019-04-28T12:00:00+02:00',
-            'timeZone': 'Europe/Madrid',
+file1.SetContentString(json.dumps(
+    {
+        "summary": "tarea para SD!!!",
+        "description": "A chance to hear more about Googles developer products.",
+        "start": {
+            "dateTime": "2019-04-28T12:00:00+02:00",
+            "timeZone": "Europe/Madrid"
         },
-        'end': {
-            'dateTime': '2019-04-28T12:00:00+02:00',
-            'timeZone': 'Europe/Madrid',
+        "end": {
+            "dateTime": "2019-04-28T13:00:00+02:00",
+            "timeZone": "Europe/Madrid"
         },
-        'attendees': [
-            {'email': 'johntitorium@gmail.com'}
+        "attendees": [
+            {"email": "johntitorium@gmail.com"}
         ]
     }))
 file1.Upload()
