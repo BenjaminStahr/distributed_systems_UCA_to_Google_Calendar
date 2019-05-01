@@ -107,15 +107,14 @@ def main():
 
     # to write an event into the calender you need to specify summary, description, start_date, end_date, user
     # this is just for testing usages
-    summary = 'This is the summary'
-    description = 'This is the description'
-    start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
-    end_date = datetime.datetime(2019, 4, 25, 14, 40, 0, 0, tzinfo=None, fold=0).isoformat()
-    print(end_date)
+    #summary = 'This is the summary'
+    #description = 'This is the description'
+    #start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
+    ##print(end_date)
     user = 'johntitorium@gmail.com'
 
-    event = get_event(summary, description, start_date, end_date, user)
-    service_calender.events().insert(calendarId='primary', body=event).execute()
+    #event = get_event(summary, description, start_date, end_date, user)
+    #service_calender.events().insert(calendarId='primary', body=event).execute()
     service_calender.events().insert(calendarId='primary', body=text).execute()
 
 

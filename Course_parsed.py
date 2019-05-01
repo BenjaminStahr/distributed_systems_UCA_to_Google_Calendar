@@ -90,9 +90,27 @@ def Event_parse(s,link):
     return m
 
 
+def to_json(summary, description, start_date, end_date, user):
+    event = {
+        'summary': summary,
+        'description': description,
+        'start': {
+            'dateTime': start_date,
+            'timeZone': 'Europe/Madrid',
+        },
+        'end': {
+            'dateTime': end_date,
+            'timeZone': 'Europe/Madrid',
+        },
+        'attendees': [
+            {'email': user}
+        ]
+    }
+    return event
 
 
-def get_campus(Uca_login, Uca_password):
+
+def get_campus(Uca_login, Uca_password,email):
     s=requests.Session()
     events_list=list()
     s =Uca_authorize(s,Uca_login,Uca_password)
@@ -111,7 +129,12 @@ def get_campus(Uca_login, Uca_password):
         for j in ev.keys():
             if j!='Name':
                 print(j)
-                events.append(Event_parse(s,j))
+
+                event=Event_parse(s,j))
+                start_date=event[5]
+                description=event[1]+' '+ event[3]
+
+
         events_list.append(events)
 
 
@@ -137,5 +160,6 @@ def get_campus(Uca_login, Uca_password):
 
 
 #rint(m)
-print(get_campus('u713474834','c240441'))
+email=None
+print(get_campus('u713474834','c240441',email))
 

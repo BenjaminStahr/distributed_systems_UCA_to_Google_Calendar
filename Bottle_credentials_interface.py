@@ -1,4 +1,4 @@
-'''from bottle import run, get, template, post, request
+from bottle import run, get, template, post, request
 
 @get('/')
 def form():
@@ -8,8 +8,9 @@ def form():
 def processForm():
     userNameCampus = request.forms.get('userNameCampus')
     passWordCampus = request.forms.get('pwdCampus')
-    return '<p>'+ userNameCampus+ ' ' + passWordCampus+'</p>'
+    userNameGoogle = request.forms.get('userNameGoogle')
+    print('<p>'+ userNameCampus+ ' ' + passWordCampus+ userNameGoogle +'</p>')
+    return '<p>'+ userNameCampus+ ' ' + passWordCampus+ userNameGoogle +'</p>'
 
-#if __name__ == '__main__':
-#    run()
-'''
+if __name__ == '__main__':
+    run()
