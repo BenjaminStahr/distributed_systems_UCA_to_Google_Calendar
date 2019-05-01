@@ -12,7 +12,7 @@ import ast
 SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/drive']
 
 
-# TODO make this aviable for more countrys than just Spain
+# TODO make this available for more countrys than just Spain
 # a function for sending events to the calender, where you only have the data
 def get_event(summary, description, start_date, end_date, user):
     event = {
@@ -107,16 +107,15 @@ def main():
 
     # to write an event into the calender you need to specify summary, description, start_date, end_date, user
     # this is just for testing usages
-    summary = 'This is the summary'
+    summary = 'This is the summary, muh'
     description = 'This is the description'
     start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
-    end_date = datetime.datetime(2019, 4, 25, 14, 40, 0, 0, tzinfo=None, fold=0).isoformat()
-    print(end_date)
-    user = 'johntitorium@gmail.com'
+    end_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
+    user = 'evfim1234@gmail.com'
 
     event = get_event(summary, description, start_date, end_date, user)
     service_calender.events().insert(calendarId='primary', body=event).execute()
-    service_calender.events().insert(calendarId='primary', body=text).execute()
+    #service_calender.events().insert(calendarId='primary', body=text).execute()
 
 
 if __name__ == '__main__':
