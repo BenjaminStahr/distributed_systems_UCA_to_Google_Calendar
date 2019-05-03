@@ -2,6 +2,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
 
+# a upload script for google drive, only used by RabbitMq for uploading messages from campus virtual to google drive
 def upload_file_to_drive(file_content):
     google_authorization = GoogleAuth()
     google_authorization.LoadCredentialsFile("mycreds.txt")
@@ -23,20 +24,4 @@ def upload_file_to_drive(file_content):
 
     file1 = drive.CreateFile({'title': 'test.json'})
     file1.SetContentString(file_content)
-    '''file1.SetContentString(json.dumps(
-        {
-            "summary": "tarea para SD!!!",
-            "description": "A chance to hear more about Googles developer products.",
-            "start": {
-                "dateTime": "2019-04-28T12:00:00+02:00",
-                "timeZone": "Europe/Madrid"
-            },
-            "end": {
-                "dateTime": "2019-04-28T13:00:00+02:00",
-                "timeZone": "Europe/Madrid"
-            },
-            "attendees": [
-                {"email": "johntitorium@gmail.com"}
-            ]
-        }))'''
     file1.Upload()
