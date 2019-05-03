@@ -62,15 +62,21 @@ def Get_camp_page(Session,link):
 
 
 def Event_links(Session,page):
-    entregas_links={}
+    entregas_links = {}
 
-    entregas_links['Name']=str(page.title.string)
+    entregas_links['Name'] = str(page.title.string)
     url = "https://av03-18-19.uca.es/moodle/theme/image.php/boostuca/assign/1553847905/icon"
     for i in page.find_all('img'):
         if url == str(i.get('src')):
             a = i.previous_element
-            if a.get('href') != None and a.span != None:
-                entregas_links[str(a.get('href'))]=str(a.span.contents[0])
+            print(a)
+            try:
+                href= a.get('href')
+            except:
+                pass
+            else:
+                if a.get('href') != None and a.span != None:
+                    entregas_links[str(a.get('href'))] = str(a.span.contents[0])
 
     return entregas_links, entregas_links['Name']
 
@@ -152,13 +158,15 @@ def get_campus(Uca_login, Uca_password,email):
 
                 event=Event_parse(s,j)
                 summary=evnm+' '+ev[j]
-                start_date=date_transform(event[5])
-                description=str(event[1]+' '+ event[3])
-                end_date=start_date
-                user=email
-                message=to_json(summary, description, start_date, end_date, user)
-                print(message)
-                #send_event_to_queue.send_event(message)
+                print(event[4])
+                if event[4] == 'Fecha de entrega':
+                    start_date=date_transform(event[5])
+                    description=str(event[1]+' '+ event[3])
+                    end_date=start_date
+                    user=email
+                    message=to_json(summary, description, start_date, end_date, user)
+                    print(message)
+                    send_event_to_queue.send_event(message)
 
         events_list.append(events)
 
@@ -170,7 +178,7 @@ def get_campus(Uca_login, Uca_password,email):
 
 
 #s = requests.Session()
-#Uca_authorize(s,'u713474834','c240441')
+#   Uca_authorize(s,'uL2FRVZGVK','c324351')
 #with open('Session.txt', 'rb') as f:
 #    s = pickle.load(f)
 #Courses_links(s)
@@ -185,6 +193,6 @@ def get_campus(Uca_login, Uca_password,email):
 
 
 #rint(m)
-email='evfim1234@gmail.com'
+email='johntitorium@gmail.com'
 print(get_campus('u713474834','c240441',email))
 
