@@ -119,13 +119,17 @@ def delete_event_already_exists(event, service_calender):
                 print('same summary')
                 print(event['start']['dateTime'])
                 print(existing_event['start']['dateTime'])
-                if existing_event['start']['dateTime'] == event['start']['dateTime']:
-                    if existing_event['end']['dateTime'] == event['end']['dateTime']:
+                tmpstart = (existing_event['start']['dateTime']).replace('+02:00', '').replace('+01:00', '')
+                tmpEnd = (existing_event['end']['dateTime']).replace('+02:00', '').replace('+01:00', '')
+                print(tmpstart)
+                print(tmpEnd)
+                if tmpstart == event['start']['dateTime']:
+                    if tmpEnd == event['end']['dateTime']:
                         print('same time data')
                         if existing_event['attendees'][0]['email'] == event['attendees'][0]['email']:
                             print('same email')
                             service_calender.events().delete(calendarId='primary', eventId=existing_event['id']).execute()
-                            print('deleted an event from the calendar')
+                            print('deleted an event from the calendar, because it already was there')
 
 
 # a function, which encapsulates the complete logic of the getting the information from google drive
@@ -137,7 +141,7 @@ def process_event():
         event = get_string_from_file(service_drive)
         if event is not None:
             delete_event_already_exists(event, service_calender)
-            service_calender.events().insert(calendarId='primary', body=event).execute()
+            #service_calender.events().insert(calendarId='primary', body=event).execute()
             print('event added successfully to the calendar')
         time.sleep(30)
 
