@@ -5,7 +5,7 @@ from Authorization_script import Uca_authorize, Courses_list
 import requests.utils, pickle
 import requests
 import datetime
-import logging
+import send_event_to_queue
 def Courses_links(Session):
     browser = mechanicalsoup.StatefulBrowser(Session)
     browser.open_relative('https://campusvirtual.uca.es/intranet/es/cursos/actuales/estudiante/')
@@ -110,7 +110,7 @@ def to_json(summary, description, start_date, end_date, user):
     return event
 
 def date_transform(a):
-    a = 'viernes, 8 de marzo de 2019, 20:40'
+
     b = a.split()
     # start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
     year=int(b[5].split(',')[0])
@@ -122,6 +122,7 @@ def date_transform(a):
          'noviembre': 11, 'diciembre': 12}
     month=int(s[b[3]])
     day=int(b[1])
+
     date=datetime.datetime(year,month,day,hours,mins,0,0, tzinfo=None, fold=0).isoformat()
     return date
 
@@ -140,6 +141,7 @@ def get_campus(Uca_login, Uca_password,email):
         events=list()
         #print(link)
         Course_page=Get_camp_page(s,link)
+        print(link)
         evl=Event_links(s,Course_page)
         ev=evl[0]
         evnm=evl[1]
@@ -156,7 +158,7 @@ def get_campus(Uca_login, Uca_password,email):
                 user=email
                 message=to_json(summary, description, start_date, end_date, user)
                 print(message)
-                sendmessage(message)
+                #send_event_to_queue.send_event(message)
 
         events_list.append(events)
 
@@ -183,6 +185,6 @@ def get_campus(Uca_login, Uca_password,email):
 
 
 #rint(m)
-email=None
+email='evfim1234@gmail.com'
 print(get_campus('u713474834','c240441',email))
 
