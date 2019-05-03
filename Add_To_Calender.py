@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import ast
-
+import time
 
 # our scopes for authentication at google services
 SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/drive']
@@ -133,11 +133,13 @@ def delete_event_already_exists(event, service_calender):
 def process_event():
     service_calender = get_google_calender_service()
     service_drive = get_google_drive_service()
-    event = get_string_from_file(service_drive)
-    if event is not None:
-        delete_event_already_exists(event, service_calender)
-        service_calender.events().insert(calendarId='primary', body=event).execute()
-        print('event added successfully to the calendar')
+    while True:
+        event = get_string_from_file(service_drive)
+        if event is not None:
+            delete_event_already_exists(event, service_calender)
+            service_calender.events().insert(calendarId='primary', body=event).execute()
+            print('event added successfully to the calendar')
+        time.sleep(30)
 
 
 def main():

@@ -5,7 +5,7 @@ from Authorization_script import Uca_authorize, Courses_list
 import requests.utils, pickle
 import requests
 import datetime
-import logging
+import send_event_to_queue
 def Courses_links(Session):
     browser = mechanicalsoup.StatefulBrowser(Session)
     browser.open_relative('https://campusvirtual.uca.es/intranet/es/cursos/actuales/estudiante/')
@@ -110,53 +110,56 @@ def to_json(summary, description, start_date, end_date, user):
     return event
 
 def date_transform(a):
-    a = 'viernes, 8 de marzo de 2019, 20:40'
+
     b = a.split()
     # start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
     year=int(b[5].split(',')[0])
     hours=int(b[6].split(":")[0])
     mins=int(b[6].split(":")[1])
 
-    s = {'enero': 1, 'febrero': 2, 'marzo': 3, 'abríl': 4, 'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
+    s = {'enero': 1, 'febrero': 2, 'marzo': 3, 'abríl': 4,'abril': 4, 'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
          'septiembre': 9, 'octubre': 10,
          'noviembre': 11, 'diciembre': 12}
     month=int(s[b[3]])
     day=int(b[1])
+
     date=datetime.datetime(year,month,day,hours,mins,0,0, tzinfo=None, fold=0).isoformat()
     return date
 
 def sendmessage(message):
     pass
 
+
 def get_campus(Uca_login, Uca_password,email):
-    s=requests.Session()
-    events_list=list()
-    s =Uca_authorize(s,Uca_login,Uca_password)
-    lists=Courses_links(s)
-    Courses=lists[0]
-    s =lists[1]
+    s = requests.Session()
+    events_list = list()
+    s = Uca_authorize(s, Uca_login, Uca_password)
+    lists = Courses_links(s)
+    Courses = lists[0]
+    s = lists[1]
     #print(Courses)
     for link in Courses:
-        events=list()
+        events = list()
         #print(link)
         Course_page=Get_camp_page(s,link)
-        evl=Event_links(s,Course_page)
-        ev=evl[0]
-        evnm=evl[1]
+        print(link)
+        evl = Event_links(s,Course_page)
+        ev = evl[0]
+        evnm = evl[1]
 
         for j in ev.keys():
-            if j!='Name':
+            if j != 'Name':
                 #print(j,ev[j])
 
-                event=Event_parse(s,j)
-                summary=evnm+' '+ev[j]
-                start_date=date_transform(event[5])
-                description=str(event[1]+' '+ event[3])
-                end_date=start_date
-                user=email
-                message=to_json(summary, description, start_date, end_date, user)
+                event = Event_parse(s,j)
+                summary = evnm+' '+ev[j]
+                start_date = date_transform(event[5])
+                description = str(event[1]+' '+ event[3])
+                end_date = start_date
+                user = email
+                message = to_json(summary, description, start_date, end_date, user)
                 print(message)
-                sendmessage(message)
+                send_event_to_queue.send_event(message)
 
         events_list.append(events)
 
@@ -183,6 +186,6 @@ def get_campus(Uca_login, Uca_password,email):
 
 
 #rint(m)
-email=None
-print(get_campus('u713474834','c240441',email))
+email='johntitorium@gmail.com'
+print(get_campus('uL2FRVZGVK','c324351',email))
 
