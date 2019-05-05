@@ -6,13 +6,13 @@ import requests.utils, pickle
 import requests
 import datetime
 import send_event_to_queue
+import time
+
+
 def Courses_links(Session):
     browser = mechanicalsoup.StatefulBrowser(Session)
     browser.open_relative('https://campusvirtual.uca.es/intranet/es/cursos/actuales/estudiante/')
-
     page = browser.get_current_page()
-
-
     links=[]
     for link in page.find_all('a'):
         pat='https://av'
@@ -132,87 +132,58 @@ def date_transform(a):
     date=datetime.datetime(year,month,day,hours,mins,0,0, tzinfo=None, fold=0).isoformat()
     return date
 
-def sendmessage(message):
-    pass
 
 def get_campus():
-    fi=open('Uca_creds.txt')
-    l = [str(line.strip()) for line in fi]
-    print(l)
-    Uca_login = l[0]
-    Uca_password = l[1]
-    email=l[2]
-    fi.close()
-    s=requests.Session()
-    events_list=list()
-    s =Uca_authorize(s,Uca_login,Uca_password)
-    lists=Courses_links(s)
-    Courses=lists[0]
-    s =lists[1]
-    #print(Courses)
-    for link in Courses:
-        events = list()
-        #print(link)
-        Course_page=Get_camp_page(s,link)
-       ##print(link)
-        #Course_page=
-        evl=Event_links(s,Course_page)
-        ev=evl[0]
-        evnm=evl[1]
+    while True:
+        fi=open('Uca_creds.txt')
+        l = [str(line.strip()) for line in fi]
+        print(l)
+        Uca_login = l[0]
+        Uca_password = l[1]
+        email=l[2]
+        fi.close()
+        s=requests.Session()
+        events_list=list()
+        s =Uca_authorize(s,Uca_login,Uca_password)
+        lists=Courses_links(s)
+        Courses=lists[0]
+        s =lists[1]
+        #print(Courses)
+        for link in Courses:
+            events = list()
+            #print(link)
+            Course_page=Get_camp_page(s,link)
+           ##print(link)
+            #Course_page=
+            evl=Event_links(s,Course_page)
+            ev=evl[0]
+            evnm=evl[1]
 
-        for j in ev.keys():
-            if j != 'Name':
-                #print(j,ev[j])
+            for j in ev.keys():
+                if j != 'Name':
+                    #print(j,ev[j])
 
-                event=Event_parse(s,j)
-                summary=evnm+' '+ev[j]
+                    event=Event_parse(s,j)
+                    summary=evnm+' '+ev[j]
 
-                #print(event)
-                if event[4] == 'Fecha de entrega':
-                    start_date=date_transform(event[5])
-                    description=str(event[1]+' '+ event[3])
-                    end_date=start_date
-                    user=email
-                    message=to_json(summary, description, start_date, end_date, user)
-                    #print(message)
-                    send_event_to_queue.send_event(message)
-
-                elif event[6] == 'Fecha de entrega':
-                        #print(event)
-                        start_date=date_transform(event[7])
-                        description=str(event[3]+' '+ event[5])
+                    #print(event)
+                    if event[4] == 'Fecha de entrega':
+                        start_date=date_transform(event[5])
+                        description=str(event[1]+' '+ event[3])
                         end_date=start_date
                         user=email
                         message=to_json(summary, description, start_date, end_date, user)
                         #print(message)
                         send_event_to_queue.send_event(message)
 
-
-        events_list.append(events)
-
-
-
-
-    return events_list
-
-
-
-#s = requests.Session()
-#   Uca_authorize(s,'uL2FRVZGVK','c324351')
-#with open('Session.txt', 'rb') as f:
-#    s = pickle.load(f)
-#Courses_links(s)
-
-#f=open('courses_links.txt','r')
-#links = [line.strip() for line in f]
-#print(links)
-#print(links[0])
-#f.close()
-#with open('Session.txt', 'rb') as f:
-#    s = pickle.load(f)
-
-
-#rint(m)
-#email='johntitorium@gmail.com'
-#print(get_campus('uL2FRVZGVK','c324351',email))
+                    elif event[6] == 'Fecha de entrega':
+                            #print(event)
+                            start_date=date_transform(event[7])
+                            description=str(event[3]+' '+ event[5])
+                            end_date=start_date
+                            user=email
+                            message=to_json(summary, description, start_date, end_date, user)
+                            #print(message)
+                            send_event_to_queue.send_event(message)
+        time.sleep(3600)
 
