@@ -69,7 +69,7 @@ def Event_links(Session,page):
     for i in page.find_all('img'):
         if url == str(i.get('src')):
             a = i.previous_element
-            print(a)
+            #print(a)
             try:
                 href= a.get('href')
             except:
@@ -135,7 +135,14 @@ def date_transform(a):
 def sendmessage(message):
     pass
 
-def get_campus(Uca_login, Uca_password,email):
+def get_campus():
+    fi=open('Uca_creds.txt')
+    l = [str(line.strip()) for line in fi]
+    print(l)
+    Uca_login = l[0]
+    Uca_password = l[1]
+    email=l[2]
+    fi.close()
     s=requests.Session()
     events_list=list()
     s =Uca_authorize(s,Uca_login,Uca_password)
@@ -147,7 +154,8 @@ def get_campus(Uca_login, Uca_password,email):
         events=list()
         #print(link)
         Course_page=Get_camp_page(s,link)
-        print(link)
+       ##print(link)
+        #Course_page=
         evl=Event_links(s,Course_page)
         ev=evl[0]
         evnm=evl[1]
@@ -158,15 +166,27 @@ def get_campus(Uca_login, Uca_password,email):
 
                 event=Event_parse(s,j)
                 summary=evnm+' '+ev[j]
-                print(event[4])
+
+                #print(event)
                 if event[4] == 'Fecha de entrega':
                     start_date=date_transform(event[5])
                     description=str(event[1]+' '+ event[3])
                     end_date=start_date
                     user=email
                     message=to_json(summary, description, start_date, end_date, user)
-                    print(message)
+                    #print(message)
                     send_event_to_queue.send_event(message)
+
+                elif event[6] == 'Fecha de entrega':
+                        #print(event)
+                        start_date=date_transform(event[7])
+                        description=str(event[3]+' '+ event[5])
+                        end_date=start_date
+                        user=email
+                        message=to_json(summary, description, start_date, end_date, user)
+                        #print(message)
+                        send_event_to_queue.send_event(message)
+
 
         events_list.append(events)
 
@@ -193,6 +213,6 @@ def get_campus(Uca_login, Uca_password,email):
 
 
 #rint(m)
-email='johntitorium@gmail.com'
-print(get_campus('u713474834','c240441',email))
+#email='johntitorium@gmail.com'
+#print(get_campus('uL2FRVZGVK','c324351',email))
 
