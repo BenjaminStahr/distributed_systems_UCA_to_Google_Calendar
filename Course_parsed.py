@@ -151,7 +151,7 @@ def get_campus():
     s =lists[1]
     #print(Courses)
     for link in Courses:
-        events=list()
+        events = list()
         #print(link)
         Course_page=Get_camp_page(s,link)
        ##print(link)
@@ -161,7 +161,7 @@ def get_campus():
         evnm=evl[1]
 
         for j in ev.keys():
-            if j!='Name':
+            if j != 'Name':
                 #print(j,ev[j])
 
                 event=Event_parse(s,j)

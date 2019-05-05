@@ -11,7 +11,7 @@ channel.queue_declare(queue='MessageQueue')
 
 
 def callback(ch, method, properties, body):
-    print(body.decode("utf-8"))
+    print('event got received')
     Drive_Authorization.upload_file_to_drive(body.decode("utf-8"))
 
 
