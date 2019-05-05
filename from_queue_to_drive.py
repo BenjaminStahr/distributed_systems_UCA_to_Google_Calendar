@@ -1,12 +1,11 @@
 import pika
 import Drive_Authorization
 
+
 def setup_queue_consumer():
     connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='localhost'))
     channel = connection.channel()
-
-
     channel.queue_declare(queue='MessageQueue')
 
 
@@ -18,7 +17,5 @@ def setup_queue_consumer():
     channel.basic_consume(queue='MessageQueue',
                           auto_ack=True,
                           on_message_callback=callback)
-
-
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()

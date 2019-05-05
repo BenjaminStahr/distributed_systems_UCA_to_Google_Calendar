@@ -8,6 +8,8 @@ from google.auth.transport.requests import Request
 import ast
 import time
 
+
+
 # our scopes for authentication at google services
 SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/drive']
 
@@ -125,8 +127,8 @@ def delete_event_already_exists(event, service_calender):
                 print(tmpEnd)
                 if tmpstart == event['start']['dateTime']:
                     if tmpEnd == event['end']['dateTime']:
-                        print('same time data')
-                        if existing_event['attendees'][0]['email'] == event['attendees'][0]['email']:
+                        print(event['attendees'][0]['email'])
+                        if existing_event['attendees'][0]['email'].lower() == event['attendees'][0]['email'].lower():
                             print('same email')
                             service_calender.events().delete(calendarId='primary', eventId=existing_event['id']).execute()
                             print('deleted an event from the calendar, because it already was there')
@@ -141,14 +143,6 @@ def process_event():
         event = get_string_from_file(service_drive)
         if event is not None:
             delete_event_already_exists(event, service_calender)
-            #service_calender.events().insert(calendarId='primary', body=event).execute()
+            service_calender.events().insert(calendarId='primary', body=event).execute()
             print('event added successfully to the calendar')
-        time.sleep(30)
-
-
-def main():
-    process_event()
-
-
-if __name__ == '__main__':
-    main()
+        time.sleep(10)

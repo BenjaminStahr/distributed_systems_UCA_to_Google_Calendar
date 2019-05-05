@@ -186,4 +186,3 @@ def get_campus():
                             #print(message)
                             send_event_to_queue.send_event(message)
         time.sleep(3600)
-
