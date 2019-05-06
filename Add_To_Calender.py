@@ -143,7 +143,7 @@ def process_event():
         event = get_string_from_file(service_drive)
         if event is not None:
             delete_event_already_exists(event, service_calender)
-            #service_calender.events().insert(calendarId='primary', body=event).execute()
+            service_calender.events().insert(calendarId='primary', body=event).execute()
             print('event added successfully to the calendar')
         time.sleep(10)
 

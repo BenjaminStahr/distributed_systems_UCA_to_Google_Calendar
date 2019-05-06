@@ -13,7 +13,6 @@ import os
 import time
 # our scopes for authentication at google services
 SCOPES = ['https://www.googleapis.com/auth/drive']
-#SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/drive']
 
 def get_google_drive_service():
     creds = None
