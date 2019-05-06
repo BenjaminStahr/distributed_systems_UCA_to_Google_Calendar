@@ -7,7 +7,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import ast
 import time
-import from_queue_to_drive
 
 
 # our scopes for authentication at google services

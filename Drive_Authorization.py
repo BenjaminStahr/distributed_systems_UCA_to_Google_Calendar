@@ -1,8 +1,3 @@
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-import Add_To_Calender
-
-import json
 import pickle
 import os.path
 from googleapiclient.discovery import build
