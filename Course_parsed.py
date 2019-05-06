@@ -7,6 +7,7 @@ import requests
 import datetime
 import send_event_to_queue
 import time
+import os
 
 
 def Courses_links(Session):
@@ -134,55 +135,56 @@ def date_transform(a):
 
 
 def get_campus():
-    while True:
-        fi=open('Uca_creds.txt')
-        l = [str(line.strip()) for line in fi]
-        print(l)
-        Uca_login = l[0]
-        Uca_password = l[1]
-        email=l[2]
-        fi.close()
-        s=requests.Session()
-        events_list=list()
-        s =Uca_authorize(s,Uca_login,Uca_password)
-        lists=Courses_links(s)
-        Courses=lists[0]
-        s =lists[1]
-        #print(Courses)
-        for link in Courses:
-            events = list()
-            #print(link)
-            Course_page=Get_camp_page(s,link)
-           ##print(link)
-            #Course_page=
-            evl=Event_links(s,Course_page)
-            ev=evl[0]
-            evnm=evl[1]
+    while os.path.isfile('./Uca_creds.txt'):
+        while True:
+            fi=open('Uca_creds.txt')
+            l = [str(line.strip()) for line in fi]
+            print(l)
+            Uca_login = l[0]
+            Uca_password = l[1]
+            email=l[2]
+            fi.close()
+            s=requests.Session()
+            events_list=list()
+            s =Uca_authorize(s,Uca_login,Uca_password)
+            lists=Courses_links(s)
+            Courses=lists[0]
+            s =lists[1]
+            #print(Courses)
+            for link in Courses:
+                events = list()
+                #print(link)
+                Course_page=Get_camp_page(s,link)
+               ##print(link)
+                #Course_page=
+                evl=Event_links(s,Course_page)
+                ev=evl[0]
+                evnm=evl[1]
 
-            for j in ev.keys():
-                if j != 'Name':
-                    #print(j,ev[j])
+                for j in ev.keys():
+                    if j != 'Name':
+                        #print(j,ev[j])
 
-                    event=Event_parse(s,j)
-                    summary=evnm+' '+ev[j]
+                        event=Event_parse(s,j)
+                        summary=evnm+' '+ev[j]
 
-                    #print(event)
-                    if event[4] == 'Fecha de entrega':
-                        start_date=date_transform(event[5])
-                        description=str(event[1]+' '+ event[3])
-                        end_date=start_date
-                        user=email
-                        message=to_json(summary, description, start_date, end_date, user)
-                        #print(message)
-                        send_event_to_queue.send_event(message)
-
-                    elif event[6] == 'Fecha de entrega':
-                            #print(event)
-                            start_date=date_transform(event[7])
-                            description=str(event[3]+' '+ event[5])
+                        #print(event)
+                        if event[4] == 'Fecha de entrega':
+                            start_date=date_transform(event[5])
+                            description=str(event[1]+' '+ event[3])
                             end_date=start_date
                             user=email
                             message=to_json(summary, description, start_date, end_date, user)
                             #print(message)
                             send_event_to_queue.send_event(message)
-        time.sleep(3600)
+
+                        elif event[6] == 'Fecha de entrega':
+                                #print(event)
+                                start_date=date_transform(event[7])
+                                description=str(event[3]+' '+ event[5])
+                                end_date=start_date
+                                user=email
+                                message=to_json(summary, description, start_date, end_date, user)
+                                #print(message)
+                                send_event_to_queue.send_event(message)
+            time.sleep(3600)

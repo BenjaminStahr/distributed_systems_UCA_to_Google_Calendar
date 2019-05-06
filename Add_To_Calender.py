@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import ast
 import time
-
+import from_queue_to_drive
 
 
 # our scopes for authentication at google services
@@ -143,6 +143,7 @@ def process_event():
         event = get_string_from_file(service_drive)
         if event is not None:
             delete_event_already_exists(event, service_calender)
-            service_calender.events().insert(calendarId='primary', body=event).execute()
+            #service_calender.events().insert(calendarId='primary', body=event).execute()
             print('event added successfully to the calendar')
         time.sleep(10)
+
