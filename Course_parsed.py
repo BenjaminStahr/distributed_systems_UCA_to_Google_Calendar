@@ -22,7 +22,6 @@ def Courses_links(Session):
             links.append(l)
         links=list(dict.fromkeys(links)) #remove the same links
     f=open('courses_links.txt','w')
-    #print(links)
     for link in links:
         f.write(link+'\n')
     f.close
@@ -34,7 +33,6 @@ def Courses_links(Session):
 
 def prepare(link):
     link=[i for i in link.split('?')]
-    #print(link)
     for i in link[1].split('='):
         link.append(i)
 
@@ -42,7 +40,6 @@ def prepare(link):
 
 
 def Get_camp_page(Session,link):
-    #print(link)
     link=prepare(link)
 
     id = {}
@@ -54,9 +51,6 @@ def Get_camp_page(Session,link):
     browser.submit_selected()
     browser.open_relative(link[0], params=id)
     page= browser.get_current_page()
-    #browser.launch_browser()
-
-    #print(browser.get_url())
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
     return page
@@ -119,7 +113,6 @@ def to_json(summary, description, start_date, end_date, user):
 def date_transform(a):
 
     b = a.split()
-    # start_date = datetime.datetime(2019, 4, 25, 14, 20, 0, 0, tzinfo=None, fold=0).isoformat()
     year=int(b[5].split(',')[0])
     hours=int(b[6].split(":")[0])
     mins=int(b[6].split(":")[1])
@@ -150,41 +143,30 @@ def get_campus():
             lists=Courses_links(s)
             Courses=lists[0]
             s =lists[1]
-            #print(Courses)
             for link in Courses:
                 events = list()
-                #print(link)
                 Course_page=Get_camp_page(s,link)
-               ##print(link)
-                #Course_page=
                 evl=Event_links(s,Course_page)
                 ev=evl[0]
                 evnm=evl[1]
 
                 for j in ev.keys():
                     if j != 'Name':
-                        #print(j,ev[j])
-
                         event=Event_parse(s,j)
                         summary=evnm+' '+ev[j]
-
-                        #print(event)
                         if event[4] == 'Fecha de entrega':
                             start_date=date_transform(event[5])
                             description=str(event[1]+' '+ event[3])
                             end_date=start_date
                             user=email
                             message=to_json(summary, description, start_date, end_date, user)
-                            #print(message)
                             send_event_to_queue.send_event(message)
 
                         elif event[6] == 'Fecha de entrega':
-                                #print(event)
                                 start_date=date_transform(event[7])
                                 description=str(event[3]+' '+ event[5])
                                 end_date=start_date
                                 user=email
                                 message=to_json(summary, description, start_date, end_date, user)
-                                #print(message)
                                 send_event_to_queue.send_event(message)
             time.sleep(3600)
