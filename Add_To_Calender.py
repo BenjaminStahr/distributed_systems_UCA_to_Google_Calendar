@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 import datetime
 import pickle
@@ -7,11 +8,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import ast
 
-
+# Nuestros ámbitos de autenticación en servicios de google
 # our scopes for authentication at google services
 SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/drive']
 
-
+# una función para enviar eventos al calendario, donde solo tiene los datos
+# probablemente solo se usa para propósitos de prueba en el proyecto
 # a function for sending events to the calender, where you only have the data
 # probably just used for testing purpose in the project
 def get_event(summary, description, start_date, end_date, user):
@@ -32,7 +34,7 @@ def get_event(summary, description, start_date, end_date, user):
     }
     return event
 
-
+# Función para obtener el servicio de calendario e inicio de sesión.
 # function for getting the calender service and login
 def get_google_calender_service():
     creds = None
@@ -57,7 +59,7 @@ def get_google_calender_service():
     service_calender = build('calendar', 'v3', credentials=creds)
     return service_calender
 
-
+# función para iniciar sesión en Google Drive y obtener el servicio de disco remoto
 # a function for logging in to google drive and getting the remote drive service
 def get_google_drive_service():
     creds = None
@@ -78,7 +80,7 @@ def get_google_drive_service():
     drive_service = build('drive', 'v3', credentials=creds)
     return drive_service
 
-
+# función que busca un archivo llamado test.json en la unidad de Google y devuelve una representación dicta de este json
 # a function, which searches for a file named test.json in the google drive and returns a dict representation of this
 # json, the name of the json we can change in the future
 # else it returns None
@@ -98,7 +100,7 @@ def get_string_from_file(service_drive):
         print('There were no test.json in the specified google drive')
         return None
 
-
+# método que obtiene todas las entradas de la cuenta de Google Drive especificada desde el 1 de enero
 # a method, which gets all entrys from the specified google drive account since the 1st of january
 def get_all_events(service_calender):
     jan_2018 = datetime.datetime(2018, 1, 1, 0, 0, 0, 0, tzinfo=None,
@@ -110,7 +112,7 @@ def get_all_events(service_calender):
     return events
 
 
-# searches for the older version of the same event and deletes it, in the case it finds it
+# busca la versión anterior del mismo evento y la elimina, en caso de que la encuentre
 def delete_event_already_exists(event, service_calender):
     if event is not None:
         events = get_all_events(service_calender)

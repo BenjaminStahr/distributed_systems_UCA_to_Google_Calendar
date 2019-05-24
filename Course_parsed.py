@@ -41,7 +41,7 @@ def prepare(link):
 
 
 def Get_camp_page(Session,link):
-    #print(link)
+
     link=prepare(link)
 
     id = {}
@@ -174,22 +174,6 @@ def get_campus(Uca_login, Uca_password,email):
 
 
     return events_list
-
-
-
-#s = requests.Session()
-#   Uca_authorize(s,'uL2FRVZGVK','c324351')
-#with open('Session.txt', 'rb') as f:
-#    s = pickle.load(f)
-#Courses_links(s)
-
-#f=open('courses_links.txt','r')
-#links = [line.strip() for line in f]
-#print(links)
-#print(links[0])
-#f.close()
-#with open('Session.txt', 'rb') as f:
-#    s = pickle.load(f)
 
 
 #rint(m)
