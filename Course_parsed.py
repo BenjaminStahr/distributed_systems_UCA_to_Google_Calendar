@@ -55,7 +55,6 @@ def Get_camp_page(Session,link):
     page= browser.get_current_page()
     #browser.launch_browser()
 
-    #print(browser.get_url())
     with open('Session.txt', 'wb') as f:
         pickle.dump(Session,f)
     return page
@@ -142,7 +141,7 @@ def get_campus(Uca_login, Uca_password,email):
     lists=Courses_links(s)
     Courses=lists[0]
     s =lists[1]
-    #print(Courses)
+
     for link in Courses:
         events=list()
         #print(link)
@@ -169,9 +168,6 @@ def get_campus(Uca_login, Uca_password,email):
                     send_event_to_queue.send_event(message)
 
         events_list.append(events)
-
-
-
 
     return events_list
 
