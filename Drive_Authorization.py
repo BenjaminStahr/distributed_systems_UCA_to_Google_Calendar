@@ -6,6 +6,8 @@ from google.auth.transport.requests import Request
 from apiclient.http import MediaFileUpload
 import os
 import time
+
+#scope para autenticacion a servicios de google
 # our scopes for authentication at google services
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
