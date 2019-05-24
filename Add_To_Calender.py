@@ -60,6 +60,7 @@ def get_google_calender_service():
     service_calender = build('calendar', 'v3', credentials=creds)
     return service_calender
 
+
 # función para iniciar sesión en Google Drive y obtener el servicio de disco remoto
 # a function for logging in to google drive and getting the remote drive service
 def get_google_drive_service():
