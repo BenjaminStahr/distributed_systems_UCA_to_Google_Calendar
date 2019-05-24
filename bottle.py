@@ -22,9 +22,6 @@ __license__ = 'MIT'
 ###############################################################################
 # Command-line interface ######################################################
 ###############################################################################
-# INFO: Some server adapters need to monkey-patch std-lib modules before they
-# are imported. This is why some of the command-line handling is done here, but
-# the actual call to _main() is at the end of the file.
 
 
 def _cli_parse(args):  # pragma: no coverage
