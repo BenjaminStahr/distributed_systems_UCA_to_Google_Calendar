@@ -1,42 +1,45 @@
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from apiclient.http import MediaFileUpload
+import os
+import time
+# our scopes for authentication at google services
+SCOPES = ['https://www.googleapis.com/auth/drive']
+
+def get_google_drive_service():
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'client_secrets.json', SCOPES)
+            creds = flow.run_local_server()
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    drive_service = build('drive', 'v3', credentials=creds)
+    return drive_service
 
 
+# a upload script for google drive, only used by RabbitMq for uploading messages from campus virtual to google drive
 def upload_file_to_drive(file_content):
-    google_authorization = GoogleAuth()
-    google_authorization.LoadCredentialsFile("mycreds.txt")
+    drive = get_google_drive_service()
+    text_file = open("text.txt", "w")
+    text_file.write(file_content)
+    text_file.close()
+    file_metadata = {'name': 'test.json'}
+    media = MediaFileUpload("text.txt",
+                            mimetype='application/json')
+    drive.files().create(body=file_metadata,
+                                    media_body=media,
+                                    fields='id').execute()
+    time.sleep(1)
 
-    if google_authorization.credentials is None:
-        # Authenticate if they're not there
-        google_authorization.LocalWebserverAuth()
-    elif google_authorization.access_token_expired:
-        # Refresh them if expired
-        google_authorization.Refresh()
-    else:
-        # Initialize the saved creds
-        google_authorization.Authorize()
-
-    # Save the current credentials to a file
-    google_authorization.SaveCredentialsFile("mycreds.txt")
-
-    drive = GoogleDrive(google_authorization)
-
-    file1 = drive.CreateFile({'title': 'test.json'})
-    file1.SetContentString(file_content)
-    '''file1.SetContentString(json.dumps(
-        {
-            "summary": "tarea para SD!!!",
-            "description": "A chance to hear more about Googles developer products.",
-            "start": {
-                "dateTime": "2019-04-28T12:00:00+02:00",
-                "timeZone": "Europe/Madrid"
-            },
-            "end": {
-                "dateTime": "2019-04-28T13:00:00+02:00",
-                "timeZone": "Europe/Madrid"
-            },
-            "attendees": [
-                {"email": "johntitorium@gmail.com"}
-            ]
-        }))'''
-    file1.Upload()
