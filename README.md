@@ -24,7 +24,7 @@ cd "C:\Program Files\RabbitMQ Server\rabbitmq_server-3.13.3\sbin"
 
 Python 3.6 is used for the project. Dependencies are found in the requirements.txt of the project.
 
-
+To run the project first run Main.py. In the console, a link will appear where you need to allow access to Google Drive and Google Calendar for the used account. Then start Add_to_Calendar.py separately.
 
 ### Program
 
