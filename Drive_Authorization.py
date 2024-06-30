@@ -3,45 +3,64 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from apiclient.http import MediaFileUpload
-import os
+from googleapiclient.http import MediaFileUpload
 import time
 
-#scope para autenticacion a servicios de google
-# our scopes for authentication at google services
-SCOPES = ['https://www.googleapis.com/auth/drive']
+SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/drive']
+
 
 def get_google_drive_service():
     creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
+            print("Loaded credentials from token.pickle")
+
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                creds.refresh(Request())
+                print("Credentials refreshed")
+            except Exception as e:
+                print(f"Failed to refresh credentials: {e}")
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secrets.json', SCOPES)
-            creds = flow.run_local_server()
-        # Save the credentials for the next run
+            try:
+                flow = InstalledAppFlow.from_client_secrets_file('client_secrets.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+                print("Obtained new credentials")
+            except Exception as e:
+                print(f"Failed to obtain new credentials: {e}")
+                return None
+
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
-    drive_service = build('drive', 'v3', credentials=creds)
-    return drive_service
+            print("Saved credentials to token.pickle")
+    try:
+        drive_service = build('drive', 'v3', credentials=creds)
+        print("Google Drive service created successfully")
+        return drive_service
+    except Exception as e:
+        print(f"Failed to create Google Drive service: {e}")
+        return None
 
 
-# a upload script for google drive, only used by RabbitMq for uploading messages from campus virtual to google drive
+# A script to upload file content to Google Drive
 def upload_file_to_drive(file_content):
     drive = get_google_drive_service()
-    text_file = open("text.txt", "w")
-    text_file.write(file_content)
-    text_file.close()
-    file_metadata = {'name': 'test.json'}
-    media = MediaFileUpload("text.txt",
-                            mimetype='application/json')
-    drive.files().create(body=file_metadata,
-                                    media_body=media,
-                                    fields='id').execute()
-    time.sleep(1)
+    if not drive:
+        print("Failed to get Google Drive service")
+        return
 
+    try:
+        text_file_path = "text.txt"
+        with open(text_file_path, "w") as text_file:
+            text_file.write(file_content)
+
+        file_metadata = {'name': 'test.json'}
+        media = MediaFileUpload(text_file_path, mimetype='text/plain')
+        file = drive.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        print(f"File uploaded successfully, file ID: {file.get('id')}")
+
+        time.sleep(1)
+    except Exception as e:
+        print(f"Failed to upload file: {e}")

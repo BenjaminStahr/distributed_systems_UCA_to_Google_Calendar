@@ -135,44 +135,49 @@ def sendmessage(message):
     pass
 
 def get_campus(Uca_login, Uca_password,email):
-    s=requests.Session()
-    events_list=list()
-    s =Uca_authorize(s,Uca_login,Uca_password)
-    lists=Courses_links(s)
-    Courses=lists[0]
-    s =lists[1]
+    # s = requests.Session()
+    # events_list = list()
+    # s = Uca_authorize(s, Uca_login, Uca_password)
+    # lists = Courses_links(s)
+    # Courses = lists[0]
+    # s = lists[1]
 
-    for link in Courses:
-        events=list()
-        #print(link)
-        Course_page=Get_camp_page(s,link)
-        print(link)
-        evl=Event_links(s,Course_page)
-        ev=evl[0]
-        evnm=evl[1]
+    # for link in Courses:
+    #     events = list()
+    #     Course_page = Get_camp_page(s, link)
+    #     evl = Event_links(s, Course_page)
+    #     ev = evl[0]
+    #     evnm = evl[1]
 
-        for j in ev.keys():
-            if j!='Name':
-                #print(j,ev[j])
+    #     for j in ev.keys():
+    #         if j != 'Name':
+    #             event = Event_parse(s, j)
+    #             summary = evnm + ' ' + ev[j]
+    #             if event[4] == 'Fecha de entrega':
+    #                 start_date = date_transform(event[5])
+    #                 description = str(event[1] + ' ' + event[3])
+    #                 end_date = start_date
+    #                 user = email
+    #                 message = to_json(summary, description, start_date, end_date, user)
+    #                 send_event_to_queue.send_event(message)
 
-                event=Event_parse(s,j)
-                summary=evnm+' '+ev[j]
-                print(event[4])
-                if event[4] == 'Fecha de entrega':
-                    start_date=date_transform(event[5])
-                    description=str(event[1]+' '+ event[3])
-                    end_date=start_date
-                    user=email
-                    message=to_json(summary, description, start_date, end_date, user)
-                    print(message)
-                    send_event_to_queue.send_event(message)
+    #     events_list.append(events)
 
-        events_list.append(events)
+    # return events_list
 
-    return events_list
+    # Mock event logic
+    summary = "Mock Event"
+    description = "This is a test event."
+    start_date = datetime.datetime.now().isoformat()
+    end_date = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
+    user = email
+    message = to_json(summary, description, start_date, end_date, user)
+    send_event_to_queue.send_event(message)
+    print("Mock event sent:", message)
+    return [message]
 
 
 #rint(m)
-email='johntitorium@gmail.com'
-print(get_campus('u713474834','c240441',email))
+email=''
+print(get_campus('','',email))
 

@@ -149,3 +149,4 @@ def process_event():
             print('event added successfully to the calendar')
         time.sleep(10)
 
+process_event()
