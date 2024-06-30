@@ -30,7 +30,7 @@ To run the project first run Main.py. In the console, a link will appear where y
 
 The flow of the program is linear. The user provides his credentials for the university server (using Bottle as a front end framework), then a web scrapper fetches the course data from the university server and sends it to a rabbitMQ server. The server is implemented with the pika module from Python. An additional script takes the course data from the server and uploads them to google drive. Another script fetches the course from Google Drive and puts  it into the calendar. The scripts operate independently from each other. 
 
-Since the university credentials are expired only a mock entry is sent. 
+Potentially the web scrapping part does not work anymore due to changes on the website and it can't be verified since no valid credentials are known anymore.
 
 ### Technologies
   - bottle as front-end ramework
