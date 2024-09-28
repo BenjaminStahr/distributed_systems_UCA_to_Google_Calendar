@@ -49,15 +49,11 @@ The project simulates a distributed system with the following components:
 
 The web scraper (triggered after university credentials are provided) scrapes the course data from the university's online system. This data is sent as a message to the RabbitMQ server for further processing.
 
-2. RabbitMQ Communication:
-
-The scraped data is sent as a message to a RabbitMQ queue for further processing. 
-
-3. Google Drive Integration:
+2. Google Drive Integration:
 
 Another process running independently listens for messages from RabbitMQ. Upon receiving a message, it formats the data and uploads it to Google Drive as a JSON file (test.json).
 
-4. Google Calendar Integration:
+3. Google Calendar Integration:
 
 Finally, another script continuously monitors Google Drive for the presence of test.json. When the file is found, its contents are downloaded and processed. The course schedule is then inserted as events into Google Calendar.
 
