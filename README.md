@@ -57,7 +57,7 @@ Another process running independently listens for messages from RabbitMQ. Upon r
 
 Finally, another script continuously monitors Google Drive for the presence of test.json. When the file is found, its contents are downloaded and processed. The course schedule is then inserted as events into Google Calendar.
 
-The entire system operates in a pipeline where component is decoupled:
+The entire system operates in a pipeline where components are decoupled:
 
 Web Scraping → RabbitMQ → Google Drive → Google Calendar.
 
