@@ -30,19 +30,39 @@ pip install -r requirements.txt
 Python 3.6 is used for the project. Dependencies are found in the requirements.txt of the project.
 
 ## Execution
-Run Main.py:
+1. Run Main.py:
 
 When Main.py is run, it starts the process by authenticating with Google Drive and Google Calendar. You'll receive a link in the console that needs to be followed to authorize the app. This authentication allows the application to interact with your Google account services.
 
-To run the project first run Main.py. In the console, a link will appear where you need to allow access to Google Drive and Google Calendar for the used account. Then start Add_to_Calendar.py separately.
+2. Provide University Server Credentials:
 
-### Program
+After authenticating Google services, you provide your credentials for the university server through a Bottle-based web interface. This triggers the web scraper to begin fetching course data from the university’s platform.
 
-The flow of the program is linear. The user provides his credentials for the university server (using Bottle as a front end framework), then a web scrapper fetches the course data from the university server and sends it to a rabbitMQ server. The server is implemented with the pika module from Python. An additional script takes the course data from the server and uploads them to google drive. Another script fetches the course from Google Drive and puts  it into the calendar. The scripts operate independently from each other. 
+3. Run Add_to_Calendar.py:
+
+Separately, run Add_to_Calendar.py that continuously monitors Google Drive for any new event data. Once the data is available, it reads the events and adds them to your Google Calendar.
+
+## Program Flow
+The project simulates a distributed system with the following components:
+
+1. Web Scraper:
+
+The web scraper (triggered after university credentials are provided) scrapes the course data from the university's online system. This data is sent as a message to the RabbitMQ server for further processing.
+
+2. RabbitMQ Communication:
+
+The scraped data is sent as a message to a RabbitMQ queue for further processing. 
+
+3. Google Drive Integration:
+
+Another process running independently listens for messages from RabbitMQ. Upon receiving a message, it formats the data and uploads it to Google Drive as a JSON file (test.json).
+
+4. Google Calendar Integration:
+
+Finally, another script continuously monitors Google Drive for the presence of test.json. When the file is found, its contents are downloaded and processed. The course schedule is then inserted as events into Google Calendar.
+
+The entire system operates in a pipeline where component is decoupled:
+
+Web Scraping → RabbitMQ → Google Drive → Google Calendar.
 
 Potentially the web scrapping part does not work anymore due to changes on the website and it can't be verified since no valid credentials are known anymore.
-
-### Technologies
-  - bottle as front-end ramework
-  - back-end consists of several independently operating python scripts
-  - different google apis were used
