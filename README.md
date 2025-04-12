@@ -1,6 +1,6 @@
 # Distributed Systems Class Project
 
-This is a Python-based project developed for a distributed systems class during my bachelor's studies in Spain. The application simulates a distributed system where university classes are scraped from a server and saved into a Google Drive calendar.
+This is a Python-based project developed for a distributed systems class during my bachelor's studies in Spain. The application simulates a distributed system where university classes are scraped from a server and saved into Google Drive fetched from there and then saved into a specified Google Calendar.
 
 ## Setup
 
