@@ -27,8 +27,6 @@ The project uses Python 3.6. Install any dependencies by running:
 
 pip install -r requirements.txt
 
-Python 3.6 is used for the project. Dependencies are found in the requirements.txt of the project.
-
 ## Execution
 1. Run Main.py:
 
